@@ -81,11 +81,18 @@ void write2servo(int us) {
   }
 }
 
+// this switches the high voltage on
 void switch_high_v_on() {
-  
+  if (high_v_state == 1) return;
+  // switch on here...
+  high_v_state = 1;
 }
+
+// this switches the high voltage off
 void switch_high_v_off() {
-  
+  if (high_v_state == 0) return;
+  // switch off here...
+  high_v_state = 0;
 }
 
 
@@ -97,11 +104,13 @@ void loop() {
   // check input pins
   if (digitalRead(LOWSPEED_PIN) == LOW) us = LOWSPEED;
   if (digitalRead(HIGHSPEED_PIN) == LOW) us = HIGHSPEED;
-  if (digitalRead(HIGH_V_PIN) == LOW) {
+  if (digitalRead(HIGH_V_PIN) == LOW) switch_high_v_on() else switch_high_v_off();
     
-  }
+  // set motor
+  myservo3.writeMicroseconds(us);
 
-  delay(500);
+  // all done. Wait and repeat.
+  delay(100);
 }
 
 
