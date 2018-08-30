@@ -6,6 +6,9 @@
 // idle speed of motor 
 #define IDLESPEED 1100
 
+// motor off ESC PWM signal
+#define OFFSPEED 980
+
 // input to switch motor to low speed (active low)
 #define LOWSPEED_PIN 4
 #define LOWSPEED 1150
@@ -21,12 +24,13 @@
 // #define DEBUG
 
 Servo myservo3;
-int us = 980;
+int us = OFFSPEED;
 int high_v_state = 0;
-
+int motor_is_running = 0;
 
 void heartbeat();
 void startMotor();
+void stopMotor();
 void switch_high_v_on();
 void switch_high_v_off();
 
@@ -45,7 +49,7 @@ void setup() {
 
   // configure ESC and write initial value (980), then wait a second for the ESC to see the PWM
   myservo3.attach(SERVOPIN,1000,2000); // attaches the servo on pin 3 to the servo object
-  write2servo(us);
+  stopMotor();
   delay(3000);
 
   // tell the user we are done with setup:
@@ -69,7 +73,14 @@ void startMotor() {
   us=1350; write2servo(us); heartbeat();
   us=1310; write2servo(us); heartbeat();
   us=1330; write2servo(us); heartbeat();
-  us=IDLESPEED; write2servo(us); heartbeat();
+  //us=IDLESPEED; write2servo(us); heartbeat();
+  motor_is_running = 1;
+}
+
+void stopMotor() {
+  us = OFFSPEED;
+  write2servo(us);
+  motor_is_running = 0;
 }
 
 void write2servo(int us) {
@@ -101,13 +112,25 @@ void loop() {
   // show we are alive
   heartbeat();
 
-  // check input pins
+  // check input pins for motor speed:
+  us = OFFSPEED;
   if (digitalRead(LOWSPEED_PIN) == LOW) us = LOWSPEED;
   if (digitalRead(HIGHSPEED_PIN) == LOW) us = HIGHSPEED;
+
+  if (us > 1000) {
+    if (motor_is_running == 0) {
+      startMotor(); 
+    } else {
+      myservo3.writeMicroseconds(us);
+    }
+  } else {
+    if (motor_is_running == 1) {
+      stopMotor();
+    }
+  }
+
+  // check input pin for high voltage:
   if (digitalRead(HIGH_V_PIN) == LOW) switch_high_v_on(); else switch_high_v_off();
-    
-  // set motor
-  myservo3.writeMicroseconds(us);
 
   // all done. Wait and repeat.
   delay(100);
