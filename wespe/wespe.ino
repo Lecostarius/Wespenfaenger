@@ -104,7 +104,7 @@ void loop() {
   // check input pins
   if (digitalRead(LOWSPEED_PIN) == LOW) us = LOWSPEED;
   if (digitalRead(HIGHSPEED_PIN) == LOW) us = HIGHSPEED;
-  if (digitalRead(HIGH_V_PIN) == LOW) switch_high_v_on() else switch_high_v_off();
+  if (digitalRead(HIGH_V_PIN) == LOW) switch_high_v_on(); else switch_high_v_off();
     
   // set motor
   myservo3.writeMicroseconds(us);
