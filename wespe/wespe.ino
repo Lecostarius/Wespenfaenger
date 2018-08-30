@@ -22,11 +22,13 @@
 
 Servo myservo3;
 int us = 980;
-int state = 0;
-int substate = 0;
+int high_v_state = 0;
+
 
 void heartbeat();
 void startMotor();
+void switch_high_v_on();
+void switch_high_v_off();
 
 void setup() {
   // configure all pins:
@@ -79,41 +81,26 @@ void write2servo(int us) {
   }
 }
 
+void switch_high_v_on() {
+  
+}
+void switch_high_v_off() {
+  
+}
+
 
 void loop() {
-  //
+  
   // show we are alive
   heartbeat();
-  us--;
-  write2servo(us);
-  
-#ifdef UNDEFINED
-  switch(state) {
-    case 0: us = 1310; write2servo(us); state=1; substate=0; break;
-    case 1: {
-      heartbeat();
-      substate++; 
-      if (substate & 1) { us = us + 10; }
-      write2servo(us);
-      if ((substate & 15) == 8) { us = us - 40; }
-      if (substate > 30) state = 2;
-    }
-    break;
-    case 2: {
-      us = 1250;
-      write2servo(us);
-      substate = 3;
-    }
-    break;
-  default:
-    state = 0;
-    // retry for ever...            
-  }
-#endif
 
-  //startMotor();
-  
-  // OK, we are done, wait
+  // check input pins
+  if (digitalRead(LOWSPEED_PIN) == LOW) us = LOWSPEED;
+  if (digitalRead(HIGHSPEED_PIN) == LOW) us = HIGHSPEED;
+  if (digitalRead(HIGH_V_PIN) == LOW) {
+    
+  }
+
   delay(500);
 }
 
