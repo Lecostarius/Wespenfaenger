@@ -45,3 +45,5 @@ fs
 now how to link to a section?
 [here](#section)
 bla
+
+$a^2+b^2=c^2$
